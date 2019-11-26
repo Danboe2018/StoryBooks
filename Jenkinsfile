@@ -3,7 +3,7 @@ pipeline {
         label 'nodejs'
     }
     options {
-        timeout(time: 10, unit: 'MINUTES') 
+        timeout(time: 10, unit: 'MINUTES')
     }
     stages {
         stage("Clean"){
