@@ -3,11 +3,17 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const Story = mongoose.model('stories');
 const User = mongoose.model('users');
-const {ensureAuthenticated, ensureGuest} = require('../helpers/auth');
+const { ensureAuthenticated, ensureGuest } = require('../helpers/auth');
 
 // Stories Index
 router.get('/', (req, res) => {
-  res.render('stories/index');
+  Story.find({ status: 'public' })
+    .populate('user')
+    .then(stories => {
+      res.render('stories/index', {
+        stories: stories
+      });
+    });
 });
 
 // Add Story Form
@@ -19,7 +25,7 @@ router.get('/add', ensureAuthenticated, (req, res) => {
 router.post('/', (req, res) => {
   let allowComments;
 
-  if(req.body.allowComments){
+  if (req.body.allowComments) {
     allowComments = true;
   } else {
     allowComments = false;
@@ -29,7 +35,7 @@ router.post('/', (req, res) => {
     title: req.body.title,
     body: req.body.body,
     status: req.body.status,
-    allowComments:allowComments,
+    allowComments: allowComments,
     user: req.user.id
   }
 
